@@ -9,6 +9,7 @@ import {
   Plane,
   Menu,
   X,
+  ExternalLink,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -17,10 +18,10 @@ import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/finance", label: "Finance Tracker", icon: Wallet },
-  { href: "/jobs", label: "Job Hunter", icon: Briefcase },
-  { href: "/travel", label: "Travel Deals", icon: Plane },
+  { href: "/", label: "Dashboard", icon: LayoutDashboard, external: false },
+  { href: "/finance", label: "Finance Tracker", icon: Wallet, external: false },
+  { href: "https://job-hunt-check.vercel.app/", label: "Job Hunter", icon: Briefcase, external: true },
+  { href: "/travel", label: "Travel Deals", icon: Plane, external: false },
 ];
 
 function NavContent({ onNavigate }: { onNavigate?: () => void }) {
@@ -39,7 +40,26 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
       <Separator />
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = !item.external && pathname === item.href;
+          if (item.external) {
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onNavigate}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+                <ExternalLink className="h-3 w-3 ml-auto" />
+              </a>
+            );
+          }
           return (
             <Link
               key={item.href}
