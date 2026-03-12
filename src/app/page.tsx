@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import {
   Card,
@@ -8,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Wallet, Briefcase, Plane, ArrowRight } from "lucide-react";
+import { Wallet, Briefcase, Plane, ArrowRight, ExternalLink } from "lucide-react";
 
 const apps = [
   {
@@ -21,17 +22,19 @@ const apps = [
     color: "text-emerald-600",
     bgColor: "bg-emerald-50",
     features: ["Track transactions", "Set budgets", "Expense categories"],
+    external: false,
   },
   {
     title: "Job Hunter",
     description:
       "Organize your job search. Track applications, interviews, and offers all in one place.",
-    href: "/jobs",
+    href: "https://job-hunt-check.vercel.app/",
     icon: Briefcase,
     badge: "Active",
     color: "text-blue-600",
     bgColor: "bg-blue-50",
     features: ["Track applications", "Status pipeline", "Company notes"],
+    external: true,
   },
   {
     title: "Travel Deals",
@@ -43,6 +46,7 @@ const apps = [
     color: "text-purple-600",
     bgColor: "bg-purple-50",
     features: ["Price tracking", "Deal alerts", "Scraping API"],
+    external: false,
   },
 ];
 
@@ -59,8 +63,16 @@ export default function Home() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {apps.map((app) => (
-          <Link key={app.href} href={app.href} className="group">
+        {apps.map((app) => {
+          const Wrapper = app.external
+            ? ({ children, className }: { children: React.ReactNode; className: string }) => (
+                <a href={app.href} target="_blank" rel="noopener noreferrer" className={className}>{children}</a>
+              )
+            : ({ children, className }: { children: React.ReactNode; className: string }) => (
+                <Link href={app.href} className={className}>{children}</Link>
+              );
+          return (
+          <Wrapper key={app.href} className="group">
             <Card className="h-full transition-all duration-200 hover:shadow-lg hover:border-primary/20 group-hover:-translate-y-1">
               <CardHeader>
                 <div className="flex items-center justify-between mb-3">
@@ -97,8 +109,9 @@ export default function Home() {
                 </Button>
               </CardContent>
             </Card>
-          </Link>
-        ))}
+          </Wrapper>
+          );
+        })}
       </div>
 
       <div className="mt-12 grid gap-6 md:grid-cols-3">
